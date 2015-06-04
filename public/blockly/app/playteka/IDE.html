@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <title>Playteka</title>
+                    
+                    <!-- Bootstrap -->
+                    <link href="./dist/css/bootstrap.min.css" rel="stylesheet">
+                        
+                        <!-- Custom styles for this template -->
+                        <link href="IDEStyle.css" rel="stylesheet">
+                            
+                            <!--- inject blockly -->
+                            <script type="text/javascript" src="../../blockly_compressed.js"></script>
+                            <script type="text/javascript" src="../../blocks_compressed.js"></script>
+                            <script type="text/javascript" src="../../javascript_compressed.js"></script>
+                            <script type="text/javascript" src="../../msg/js/en.js"></script>
+                            
+                            <!--- include blocks source files -->
+                            <script type="text/javascript" src="./blocks/CylonBlocks.js"></script>
+                            <script type="text/javascript" src="./blocks/analog.js"></script>
+                            <script type="text/javascript" src="./blocks/digital.js"></script>
+                            <script type="text/javascript" src="./blocks/button.js"></script>
+                            <script type="text/javascript" src="./blocks/led.js"></script>
+                            <script type="text/javascript" src="./blocks/RGBled.js"></script>
+                            <script type="text/javascript" src="./blocks/pin.js"></script>
+                            <script type="text/javascript" src="./blocks/servo.js"></script>
+                            <!--- javascript for main tabs -->
+                            <script type="text/javascript">
+                                var TABS_ = ['sketch', 'console', 'code'];
+                                
+                                var selected = 'sketch';
+                                
+                                function tabClick(id) {
+                                    // Deselect all tabs and hide all panes.
+                                    for (var x in TABS_) {
+                                        document.getElementById('tab_' + TABS_[x]).className = 'inactive';
+                                        document.getElementById('content_' + TABS_[x]).style.display = 'none';
+                                    }
+                                    
+                                    
+                                    document.getElementById(id).className = 'active';
+                                    // Show the selected pane.
+                                    // Select the active tab.
+                                    selected = id.replace('tab_', '');
+                                    var content = document.getElementById('content_' + selected);
+                                    content.style.display = 'block';
+                                    
+                                    //renderContent(selected);
+                                }
+                            </script>
+                            
+                            
+                            </head>
+    
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">IDE</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">File <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Open XML file</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#" onclick="save()">Save as XML file</a></li>
+                                <li><a href="#">Save as Arduino file</a></li>
+                                <li><a href="#">Save as Python file</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">English <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">español</a></li>
+                                <li><a href="#">简体中文</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
+        
+        
+        <div class="container-fluid" > <!--it makes blockly slightly shorter than window height -->
+            <div class="row">
+                <div class="col-md-3">
+                    <ul class="nav nav-pills nav-justified" >
+                        <li id="tab_sketch" role="presentation" class="active" onclick="tabClick(this.id)"><a href="#">Sketch</a></li>
+                        <li id="tab_console" role="presentation  class="inactive" onclick="tabClick(this.id)"><a href="#">Console</a></li>
+                            <li id="tab_code" role="presentation" class="inactive" onclick="tabClick(this.id)"><a href="#">Code</a></li>
+                            </ul>
+                            </div>
+                            <div class="col-md-9">
+                            <div class="btn-group">
+                            <button type="button" class="btn btn-default" aria-label="Left Align" onclick="uploadInput.click()">
+                            <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
+                            <input id="uploadInput" type="file" name="myFiles" onchange="upload();" style="display:none">
+                            </button>
+                            <button type="button" class="btn btn-default" aria-label="Left Align" onclick="save()">
+                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                            </button>
+                            </div>
+                            
+                            <div class="btn-group">
+                            <button type="button" class="btn btn-default" aria-label="Left Align" onclick="run()">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true" </span>
+                            </button>
+                            <button type="button" id="stopButton" class="btn btn-default" aria-label="Left Align" onclick="stop()" >
+                            <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                            </button>
+                            </div>
+                            </div>
+                            </div>
+                            
+                            <div class="row">
+                            
+                            <div class="col-md-12">
+                            
+                            
+                            <div id="content_code"  style="display:none">
+                            <textarea id="textarea_code" ></textarea>
+                            </div>
+                            
+                            <div id="content_console" style="display:none">
+                            <textarea id="textarea_console"></textarea>
+                            </div>
+                            
+                            
+                            <div id="content_sketch" style="display:block"></div>
+                            <xml id="toolbox" style="display: none">
+                            <category name="Logic">
+                            <block type="controls_if"></block>
+                            <block type="logic_compare"></block>
+                            <block type="logic_operation"></block>
+                            <block type="logic_negate"></block>
+                            <block type="logic_boolean"></block>
+                            <block type="logic_null"></block>
+                            <block type="logic_ternary"></block>
+                            </category>
+                            <category name="Loops">
+                            <block type="controls_repeat_ext">
+                            <value name="TIMES">
+                            <block type="math_number">
+                            <field name="NUM">10</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="controls_whileUntil"></block>
+                            <block type="controls_for">
+                            <value name="FROM">
+                            <block type="math_number">
+                            <field name="NUM">1</field>
+                            </block>
+                            </value>
+                            <value name="TO">
+                            <block type="math_number">
+                            <field name="NUM">10</field>
+                            </block>
+                            </value>
+                            <value name="BY">
+                            <block type="math_number">
+                            <field name="NUM">1</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="controls_forEach"></block>
+                            <block type="controls_flow_statements"></block>
+                            </category>
+                            <category name="Math">
+                            <block type="math_number"></block>
+                            <block type="math_arithmetic"></block>
+                            <block type="math_single"></block>
+                            <block type="math_trig"></block>
+                            <block type="math_constant"></block>
+                            <block type="math_number_property"></block>
+                            <block type="math_change">
+                            <value name="DELTA">
+                            <block type="math_number">
+                            <field name="NUM">1</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="math_round"></block>
+                            <block type="math_on_list"></block>
+                            <block type="math_modulo"></block>
+                            <block type="math_constrain">
+                            <value name="LOW">
+                            <block type="math_number">
+                            <field name="NUM">1</field>
+                            </block>
+                            </value>
+                            <value name="HIGH">
+                            <block type="math_number">
+                            <field name="NUM">100</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="math_random_int">
+                            <value name="FROM">
+                            <block type="math_number">
+                            <field name="NUM">1</field>
+                            </block>
+                            </value>
+                            <value name="TO">
+                            <block type="math_number">
+                            <field name="NUM">100</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="math_random_float"></block>
+                            </category>
+                            <category name="Text">
+                            <block type="text"></block>
+                            <block type="text_join"></block>
+                            <block type="text_append">
+                            <value name="TEXT">
+                            <block type="text"></block>
+                            </value>
+                            </block>
+                            <block type="text_length"></block>
+                            <block type="text_isEmpty"></block>
+                            <block type="text_indexOf">
+                            <value name="VALUE">
+                            <block type="variables_get">
+                            <field name="VAR">text</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="text_charAt">
+                            <value name="VALUE">
+                            <block type="variables_get">
+                            <field name="VAR">text</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="text_getSubstring">
+                            <value name="STRING">
+                            <block type="variables_get">
+                            <field name="VAR">text</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="text_changeCase"></block>
+                            <block type="text_trim"></block>
+                            <block type="text_print"></block>
+                            <block type="text_prompt_ext">
+                            <value name="TEXT">
+                            <block type="text"></block>
+                            </value>
+                            </block>
+                            </category>
+                            <category name="Lists">
+                            <block type="lists_create_empty"></block>
+                            <block type="lists_create_with"></block>
+                            <block type="lists_repeat">
+                            <value name="NUM">
+                            <block type="math_number">
+                            <field name="NUM">5</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="lists_length"></block>
+                            <block type="lists_isEmpty"></block>
+                            <block type="lists_indexOf">
+                            <value name="VALUE">
+                            <block type="variables_get">
+                            <field name="VAR">list</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="lists_getIndex">
+                            <value name="VALUE">
+                            <block type="variables_get">
+                            <field name="VAR">list</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="lists_setIndex">
+                            <value name="LIST">
+                            <block type="variables_get">
+                            <field name="VAR">list</field>
+                            </block>
+                            </value>
+                            </block>
+                            <block type="lists_getSublist">
+                            <value name="LIST">
+                            <block type="variables_get">
+                            <field name="VAR">list</field>
+                            </block>
+                            </value>
+                            </block>
+                            </category>
+                            <category name="Variables" custom="VARIABLE"></category>
+                            <category name="Functions" custom="PROCEDURE"></category>
+                            <category name="System">
+                            <block type="main_controller"></block>
+                            <block type="arduino_connection"></block>
+                            <block type="print_method"></block>
+                            <block type="every_event"></block>
+                            </category>
+                            <category name="Analog Sensor">
+                            <block type="analog_device"></block>
+                            <block type="analog_limit_device"></block>
+                            <block type="analog_read_method"></block>
+                            <block type="analog_value_parameter"></block>
+                            <block type="analog_read_event"></block>
+                            <block type="analog_lowerLimit_event"></block>
+                            <block type="analog_upperLimit_event"></block>
+                            </category>      
+                            <category name="Digital Sensor">
+                            <block type="digital_device"></block>
+                            <block type="digital_read_method"></block>
+                            <block type="digital_value_parameter"></block>
+                            <block type="digital_change_event"></block>
+                            </category>  
+                            <category name="Pin Output">
+                            <block type="pin_device"></block>
+                            <block type="pin_digitalWrite_method"></block>
+                            <block type="pin_analogWrite_method"></block>
+                            </category>
+                            <category name="Button">
+                            <block type="button_device"></block>
+                            <block type="button_isPressed_method"></block>
+                            <block type="button_push_event"></block>
+                            <block type="button_release_event"></block>
+                            </category>      
+                            <category name="Led">
+                            <block type="led_device"></block>
+                            <block type="led_turnOn_method"></block>
+                            <block type="led_turnOff_method"></block>
+                            <block type="led_toggle_method"></block>
+                            <block type="led_currentBrightness_method"></block>
+                            <block type="led_setBrightness_method"></block>
+                            <block type="led_isOn_method"></block>
+                            </category>
+                            <category name="RBG Led">
+                            <block type="RGBled_device"></block>
+                            <block type="RGBled_setRGB_method"></block>
+                            <block type="color_constant"></block>
+                            <block type="RGBled_isOn_method"></block>
+                            </category>      
+                            <category name="Servo">
+                            <block type="servo_device"></block>
+                            <block type="servo_currentAngle_method"></block>
+                            <block type="servo_angle_method"></block>
+                            <block type="servo_safeAngle_method"></block>
+                            </category>
+                            </xml>
+                            </xml>
+                            </div>  <!-- col-md-12 -->
+                            
+                            </div>  <!-- row -->
+                            
+                            </div> <!-- container -->
+                            
+                            
+                            <!-- inject blockly and add blockly change listener-->
+                            <script>
+                            Blockly.inject(document.getElementById('content_sketch'), {path: '../../', toolbox: document.getElementById('toolbox')});
+                            function myUpdateFunction() {
+                            all_devices.init();
+                            var code = Blockly.JavaScript.workspaceToCode();
+                            all_devices.append();
+                            document.getElementById('textarea_code').value = code;
+                            }
+                            
+                            Blockly.addChangeListener(myUpdateFunction);
+                            
+                            </script>
+                            
+                            
+                            
+                            
+                            <!--- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+                            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+                            <!-- Include all compiled plugins (below), or include individual files as needed -->
+                            <script src="./dist/js/bootstrap.min.js"></script>
+                            
+                            <!-- Include socket.io -->
+                            <script src="./socket.io/socket.io.js"></script>
+                            
+                            <!-- Include filesaver -->
+                            <script src="./filesaver/FileSaver.js"></script>
+                            
+                            <!-- implementation of the IDE actions -->
+                            <script src="IDEActions.js"></script>
+                            
+                            </body>
+                            </html>

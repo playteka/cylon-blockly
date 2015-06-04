@@ -1,0 +1,46 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    padding-top: 64px;
+}
+.starter-template {
+    padding: 40px 15px;
+    text-align: center;
+}
+
+.scrollspy-example {
+    height: 100px;
+    overflow: auto;
+    overflow-x:hidden;
+    overflow-y:visible;
+}
+
+.row {
+    margin-bottom: 3px;
+}
+
+#content_sketch {
+    width: 100%;
+    height: 512px;
+    border: 1px solid #ccc;
+}
+
+
+#textarea_code {
+    width: 100%;
+    height: 512px;
+    border: 1px solid #ccc;
+    resize: none;
+    overflow: auto;
+}
+
+#textarea_console {
+    width: 100%;
+    height: 512px;
+    border: 1px solid #ccc;
+    resize: none;
+    overflow: auto;
+}
+
